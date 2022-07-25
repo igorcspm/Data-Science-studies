@@ -2,6 +2,7 @@ import customtkinter
 import pandastable as pdt
 from tkinter import filedialog
 from main_economiza_AL import economiza_AL_scrap_to_df
+from live_barcode_scanner import live_barcode_scanner
 
 customtkinter.set_default_color_theme('blue')  # Themes: 'blue' (standard), 'green', 'dark-blue'
 
@@ -58,8 +59,8 @@ class App(customtkinter.CTk):
         self.optionmenu_filter.grid(row=7, column=0, columnspan=1, pady=10, padx=20, sticky='we')
 
         self.button_shot = customtkinter.CTkButton(master=self.frame_left,
-                                                text='Tirar Foto',
-                                                command=self.scrap_by_shot)
+                                                text='Aponte a Câmera',
+                                                command=self.scrap_by_camera)
         self.button_shot.grid(row=2, column=0, pady=10, padx=20)
 
         self.button_browse = customtkinter.CTkButton(master=self.frame_left,
@@ -134,8 +135,10 @@ class App(customtkinter.CTk):
                                    enable_menus=False)
             self.table.show()
 
-    def scrap_by_shot(self):
-        self.dataframe = economiza_AL_scrap_to_df()
+    def scrap_by_camera(self):
+        barcode = live_barcode_scanner()
+
+        self.dataframe = economiza_AL_scrap_to_df(barcode=barcode)
         self.dataframe = self.dataframe[['Nome', 'Preço', 'Bairro', 'Estabelecimento']]
 
         list_optionmenu_filter = ['Todos'] + [bairro.title() for bairro in self.dataframe['Bairro'].unique()]
